@@ -3,8 +3,34 @@ from letter_dict import alphabet_dict, letter_size
 
 
 class EmojiAlphabetPrinter:
-    def __init__(self):
-        pass
+    def __init__(self, word="GM", foreground=":snake:", background=":star:"):
+        self._word = word
+        self._foreground = foreground
+        self._background = background
+
+    @property
+    def word(self):
+        return self._word
+
+    @word.setter
+    def word(self, word):
+        self._word = word
+
+    @property
+    def foreground(self):
+        return self._foreground
+
+    @foreground.setter
+    def foreground(self, foreground):
+        self._foreground = foreground
+
+    @property
+    def background(self):
+        return self._background
+
+    @background.setter
+    def background(self, background):
+        self._background = background
 
     def convert_to_emoji(self, letter_values):
         """
@@ -15,29 +41,34 @@ class EmojiAlphabetPrinter:
             row_emojis = []
             for value in row:
                 if value:
-                    row_emojis.append(emoji.emojize(':snake:'))
+                    row_emojis.append(emoji.emojize(self._foreground))
                 else:
-                    row_emojis.append(emoji.emojize(':star:'))
+                    row_emojis.append(emoji.emojize(self._background))
             letter_emojis.append(row_emojis)
         return letter_emojis
 
-    def get_letter_string(self, letter_emojis):
+    def _get_letter_string(self, letter_emojis):
         """
         Convert letter emojis to a string
         """
         result = ""
         for i in range(letter_size):
             for letter in letter_emojis:
-                result += ''.join(letter[i]) + ''.join(emoji.emojize(':star:'))
+                if len(letter) < letter_size:
+                    # add a space if the letter is smaller than the letter size
+                    result += ''.join(emoji.emojize(self._background)) + ''.join(emoji.emojize(self._background))
+                else:
+                    result += ''.join(letter[i]) + ''.join(emoji.emojize(self._background))
             result += '\n'
         return result
 
-    def print_word(self, word):
+    @property
+    def result(self):
         """
-        Print an emoji representation of a word
+        Return an emoji representation of a word
         """
         # create a list of the letters in the word
-        letters = list(word)
+        letters = list(self._word)
         # create a list of values from the alphabet_dict for each letter in the word
         letter_values = [alphabet_dict[letter] for letter in letters]
 
@@ -45,11 +76,13 @@ class EmojiAlphabetPrinter:
         letter_emojis = [self.convert_to_emoji(values) for values in letter_values]
 
         # get string representation of letters with spaces and false emojis
-        letters_string = self.get_letter_string(letter_emojis)
+        letters_string = self._get_letter_string(letter_emojis)
 
-        # print string representation of letters with spaces and false emojis
-        print(letters_string, end='')
+        return letters_string
 
 
 printer = EmojiAlphabetPrinter()
-printer.print_word("HELLO")
+print(printer.result)
+
+printer.word = "CELESTIA"
+print(printer.result)

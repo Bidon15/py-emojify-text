@@ -4,6 +4,7 @@
 letter_size = 5
 
 alphabet_dict = {
+    ' ': [[False, False, False, False, False]],
     'A': [[False, False, True, False, False],
           [False, True, False, True, False],
           [True, True, True, True, True],
